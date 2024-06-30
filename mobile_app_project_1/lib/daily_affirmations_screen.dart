@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'dart:async';
 
 class DailyAffirmationsScreen extends StatefulWidget {
-  const DailyAffirmationsScreen({Key? key}) : super(key: key);
+  const DailyAffirmationsScreen({super.key});
 
   @override
   _DailyAffirmationsScreenState createState() =>
@@ -11,23 +11,15 @@ class DailyAffirmationsScreen extends StatefulWidget {
 
 class _DailyAffirmationsScreenState extends State<DailyAffirmationsScreen> {
   List<Affirmation> affirmations = [
-    Affirmation(
-        text: 'I am capable of achieving great things.',
-        category: 'Self-confidence'),
-    Affirmation(
-        text: 'I choose to be happy and positive today.',
-        category: 'Positivity'),
-    Affirmation(
-        text: 'I am worthy of love and respect.', category: 'Self-worth'),
-    Affirmation(
-        text: 'I embrace new challenges as opportunities for growth.',
-        category: 'Growth'),
+    Affirmation(text: 'I am capable of achieving great things.'),
+    Affirmation(text: 'I choose to be happy and positive today.'),
+    Affirmation(text: 'I am worthy of love and respect.'),
+    Affirmation(text: 'I embrace new challenges as opportunities for growth.'),
   ];
 
   late Affirmation currentAffirmation;
   List<Affirmation> filteredAffirmations = [];
   String searchQuery = '';
-  String selectedCategory = 'All';
   Timer? _dailyTimer;
 
   @override
@@ -35,7 +27,7 @@ class _DailyAffirmationsScreenState extends State<DailyAffirmationsScreen> {
     super.initState();
     currentAffirmation = affirmations.isNotEmpty
         ? affirmations[0]
-        : Affirmation(text: 'Default affirmation', category: 'Default');
+        : Affirmation(text: 'Default affirmation');
     filteredAffirmations = affirmations;
     _startDailyAffirmationTimer();
   }
@@ -61,14 +53,11 @@ class _DailyAffirmationsScreenState extends State<DailyAffirmationsScreen> {
   }
 
   void _showAffirmationNotification() {
-    // TODO: Implement actual notification using a package like flutter_local_notifications
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
           content: Text('New daily affirmation: ${currentAffirmation.text}')),
     );
   }
-
-  // ... rest of the code remains the same
 
   @override
   Widget build(BuildContext context) {
@@ -81,7 +70,6 @@ class _DailyAffirmationsScreenState extends State<DailyAffirmationsScreen> {
           _buildCurrentAffirmation(),
           const Divider(),
           _buildSearchBar(),
-          _buildCategoryFilter(),
           Expanded(
             child: _buildAffirmationList(),
           ),
@@ -152,37 +140,9 @@ class _DailyAffirmationsScreenState extends State<DailyAffirmationsScreen> {
     );
   }
 
-  Widget _buildCategoryFilter() {
-    Set<String> categories = {'All', ...affirmations.map((e) => e.category)};
-    return SingleChildScrollView(
-      scrollDirection: Axis.horizontal,
-      child: Row(
-        children: categories.map((category) {
-          return Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 4.0),
-            child: ChoiceChip(
-              label: Text(category),
-              selected: selectedCategory == category,
-              onSelected: (selected) {
-                setState(() {
-                  selectedCategory = category;
-                  _filterAffirmations();
-                });
-              },
-            ),
-          );
-        }).toList(),
-      ),
-    );
-  }
-
   void _filterAffirmations() {
     filteredAffirmations = affirmations.where((affirmation) {
-      bool matchesSearch =
-          affirmation.text.toLowerCase().contains(searchQuery.toLowerCase());
-      bool matchesCategory =
-          selectedCategory == 'All' || affirmation.category == selectedCategory;
-      return matchesSearch && matchesCategory;
+      return affirmation.text.toLowerCase().contains(searchQuery.toLowerCase());
     }).toList();
   }
 
@@ -198,7 +158,6 @@ class _DailyAffirmationsScreenState extends State<DailyAffirmationsScreen> {
   Widget _buildAffirmationItem(Affirmation affirmation) {
     return ListTile(
       title: Text(affirmation.text),
-      subtitle: Text(affirmation.category),
       trailing: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -246,29 +205,16 @@ class _DailyAffirmationsScreenState extends State<DailyAffirmationsScreen> {
   void _showAffirmationDialog({Affirmation? affirmation}) {
     final isEditing = affirmation != null;
     final textController = TextEditingController(text: affirmation?.text ?? '');
-    final categoryController =
-        TextEditingController(text: affirmation?.category ?? '');
 
     showDialog(
       context: context,
       builder: (context) {
         return AlertDialog(
           title: Text(isEditing ? 'Edit Affirmation' : 'Add Affirmation'),
-          content: SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                TextField(
-                  controller: textController,
-                  decoration: const InputDecoration(labelText: 'Affirmation'),
-                  maxLines: 3,
-                ),
-                TextField(
-                  controller: categoryController,
-                  decoration: const InputDecoration(labelText: 'Category'),
-                ),
-              ],
-            ),
+          content: TextField(
+            controller: textController,
+            decoration: const InputDecoration(labelText: 'Affirmation'),
+            maxLines: 3,
           ),
           actions: [
             TextButton(
@@ -279,7 +225,6 @@ class _DailyAffirmationsScreenState extends State<DailyAffirmationsScreen> {
               onPressed: () {
                 final newAffirmation = Affirmation(
                   text: textController.text,
-                  category: categoryController.text,
                 );
 
                 setState(() {
@@ -305,12 +250,11 @@ class _DailyAffirmationsScreenState extends State<DailyAffirmationsScreen> {
 
 class Affirmation {
   final String text;
-  final String category;
   bool isFavorite;
 
   Affirmation({
     required this.text,
-    required this.category,
     this.isFavorite = false,
   });
 }
+

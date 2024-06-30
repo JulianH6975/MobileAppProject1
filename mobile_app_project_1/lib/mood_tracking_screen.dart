@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'activity_storage.dart';
 
 class MoodTrackingScreen extends StatefulWidget {
-  const MoodTrackingScreen({Key? key}) : super(key: key);
+  const MoodTrackingScreen({super.key});
 
   @override
   _MoodTrackingScreenState createState() => _MoodTrackingScreenState();
@@ -17,6 +18,36 @@ class _MoodTrackingScreenState extends State<MoodTrackingScreen> {
     'Good',
     'Very Good'
   ];
+
+  @override
+  void initState() {
+    super.initState();
+    _loadMoodEntries();
+  }
+
+  Future<void> _saveMoodEntries() async {
+    final List<Activity> activities = moodEntries
+        .map((entry) => Activity(
+              title: 'Mood Entry',
+              description: entry.mood,
+              timestamp: entry.timestamp,
+            ))
+        .toList();
+    await ActivityStorage.saveActivities(activities);
+  }
+
+  Future<void> _loadMoodEntries() async {
+    final loadedActivities = await ActivityStorage.loadActivities();
+    setState(() {
+      moodEntries = loadedActivities
+          .where((activity) => activity.title == 'Mood Entry')
+          .map((activity) => MoodEntry(
+                mood: activity.description,
+                timestamp: activity.timestamp,
+              ))
+          .toList();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -119,12 +150,14 @@ class _MoodTrackingScreenState extends State<MoodTrackingScreen> {
     setState(() {
       moodEntries.insert(0, MoodEntry(mood: mood, timestamp: DateTime.now()));
     });
+    _saveMoodEntries();
   }
 
   void _deleteMoodEntry(MoodEntry entry) {
     setState(() {
       moodEntries.remove(entry);
     });
+    _saveMoodEntries();
   }
 
   Color _getMoodColor(String mood) {
@@ -151,3 +184,4 @@ class MoodEntry {
 
   MoodEntry({required this.mood, required this.timestamp});
 }
+

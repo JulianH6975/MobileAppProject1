@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
+import 'activity_storage.dart';
 
 class StressReductionTechniquesScreen extends StatefulWidget {
-  const StressReductionTechniquesScreen({Key? key}) : super(key: key);
+  const StressReductionTechniquesScreen({super.key});
 
   @override
   _StressReductionTechniquesScreenState createState() =>
@@ -25,7 +25,6 @@ class _StressReductionTechniquesScreenState
         'Continue this process moving up through your body.',
         'End with tensing and relaxing your facial muscles.',
       ],
-      audioUrl: 'https://example.com/progressive_muscle_relaxation.mp3',
     ),
     StressReductionTechnique(
       title: 'Guided Imagery',
@@ -39,7 +38,6 @@ class _StressReductionTechniquesScreenState
         'Engage all your senses in the visualization.',
         'Spend 5-10 minutes immersed in this peaceful imagery.',
       ],
-      audioUrl: 'https://example.com/guided_imagery.mp3',
     ),
   ];
 
@@ -127,7 +125,7 @@ class _StressReductionTechniquesScreenState
             child: DropdownButton<String>(
               isExpanded: true,
               value: sortBy,
-              items: ['Title', 'Duration', 'Rating', 'Usage']
+              items: ['Title', 'Duration']
                   .map((sort) => DropdownMenuItem(
                         value: sort,
                         child: Text('Sort by $sort'),
@@ -162,10 +160,6 @@ class _StressReductionTechniquesScreenState
       switch (sortBy) {
         case 'Duration':
           return a.duration.compareTo(b.duration);
-        case 'Rating':
-          return b.rating.compareTo(a.rating);
-        case 'Usage':
-          return b.usageCount.compareTo(a.usageCount);
         default:
           return a.title.compareTo(b.title);
       }
@@ -178,19 +172,6 @@ class _StressReductionTechniquesScreenState
       child: ExpansionTile(
         title: Text(technique.title),
         subtitle: Text('${technique.duration} min | ${technique.category}'),
-        trailing: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const Icon(Icons.star, size: 16, color: Colors.amber),
-                Text(technique.rating.toStringAsFixed(1)),
-              ],
-            ),
-            Text('Used ${technique.usageCount} times'),
-          ],
-        ),
         children: [
           Padding(
             padding: const EdgeInsets.all(16.0),
@@ -206,43 +187,15 @@ class _StressReductionTechniquesScreenState
                       child: Text('• $step'),
                     )),
                 const SizedBox(height: 16),
-                if (technique.audioUrl.isNotEmpty)
-                  ElevatedButton.icon(
-                    onPressed: () => _playAudio(technique.audioUrl),
-                    icon: const Icon(Icons.play_arrow),
-                    label: const Text('Play Guided Audio'),
-                  ),
-                const SizedBox(height: 16),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    ElevatedButton(
-                      onPressed: () => _startTechnique(technique),
-                      child: const Text('Start Technique'),
-                    ),
-                    _buildRatingBar(technique),
-                  ],
+                ElevatedButton(
+                  onPressed: () => _startTechnique(technique),
+                  child: const Text('Start Technique'),
                 ),
               ],
             ),
           ),
         ],
       ),
-    );
-  }
-
-  Widget _buildRatingBar(StressReductionTechnique technique) {
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: List.generate(5, (index) {
-        return IconButton(
-          icon: Icon(
-            index < technique.rating.round() ? Icons.star : Icons.star_border,
-            color: Colors.amber,
-          ),
-          onPressed: () => _rateTechnique(technique, index + 1),
-        );
-      }),
     );
   }
 
@@ -261,8 +214,6 @@ class _StressReductionTechniquesScreenState
         TextEditingController(text: technique?.category ?? '');
     final instructionsController = TextEditingController(
         text: technique?.detailedInstructions.join('\n') ?? '');
-    final audioUrlController =
-        TextEditingController(text: technique?.audioUrl ?? '');
 
     showDialog(
       context: context,
@@ -297,10 +248,6 @@ class _StressReductionTechniquesScreenState
                       labelText: 'Detailed Instructions (one per line)'),
                   maxLines: 5,
                 ),
-                TextField(
-                  controller: audioUrlController,
-                  decoration: const InputDecoration(labelText: 'Audio URL'),
-                ),
               ],
             ),
           ),
@@ -317,7 +264,6 @@ class _StressReductionTechniquesScreenState
                   duration: int.tryParse(durationController.text) ?? 0,
                   category: categoryController.text,
                   detailedInstructions: instructionsController.text.split('\n'),
-                  audioUrl: audioUrlController.text,
                 );
 
                 setState(() {
@@ -341,26 +287,11 @@ class _StressReductionTechniquesScreenState
   }
 
   void _startTechnique(StressReductionTechnique technique) {
-    setState(() {
-      technique.usageCount++;
-    });
+    ActivityStorage.addActivityFromScreen(
+        'Stress Reduction', 'Started ${technique.title}');
     // TODO: Implement starting the technique (e.g., navigate to a new screen or show a timer)
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(content: Text('Started ${technique.title}')),
-    );
-  }
-
-  void _rateTechnique(StressReductionTechnique technique, int rating) {
-    setState(() {
-      technique.rating = rating.toDouble();
-      _filterAndSortTechniques();
-    });
-  }
-
-  void _playAudio(String audioUrl) {
-    // TODO: Implement audio playback functionality
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Playing audio: $audioUrl')),
     );
   }
 }
@@ -371,9 +302,6 @@ class StressReductionTechnique {
   final int duration;
   final String category;
   final List<String> detailedInstructions;
-  final String audioUrl;
-  double rating;
-  int usageCount;
 
   StressReductionTechnique({
     required this.title,
@@ -381,8 +309,5 @@ class StressReductionTechnique {
     required this.duration,
     required this.category,
     required this.detailedInstructions,
-    required this.audioUrl,
-    this.rating = 0.0,
-    this.usageCount = 0,
   });
 }

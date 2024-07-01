@@ -2,6 +2,9 @@
 App Name: Serenity 
 
 Group Name: Serene
+
+Presentation link: https://youtu.be/oMMY5jDj4u8?si=bBLz8ZVTcu-Kvi4G
+
 ## Running the App
 
 To run this Flutter app in VS Code:
@@ -14,6 +17,4 @@ To run this Flutter app in VS Code:
 4. In the VS Code terminal, run `flutter pub get`.
 5. Select a device from the bottom right corner of VS Code or by using the search bar `>Flutter: Select Device`
 6. Click 'Run > Start Debugging' to launch the app.
-
-
 

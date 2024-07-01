@@ -1,23 +1,34 @@
 import 'package:flutter/material.dart';
+import 'dart:math';
 import 'mindfulness_exercises_screen.dart';
 import 'stress_reduction_techniques_screen.dart';
 import 'daily_affirmations_screen.dart';
 import 'mood_tracking_screen.dart';
 import 'settings_screen.dart';
 
-class HomeScreen extends StatefulWidget {
-  const HomeScreen({Key? key}) : super(key: key);
+class HomeScreen extends StatelessWidget {
+  HomeScreen({Key? key}) : super(key: key);
 
-  @override
-  _HomeScreenState createState() => _HomeScreenState();
-}
+  final List<String> _affirmations = [
+    'I am capable of achieving great things.',
+    'I choose to be happy and positive today.',
+    'I am worthy of love and respect.',
+    'I embrace new challenges as opportunities for growth.',
+    'I am confident in my abilities.',
+  ];
 
-class _HomeScreenState extends State<HomeScreen> {
+  String get _randomAffirmation {
+    final random = Random();
+    return _affirmations[random.nextInt(_affirmations.length)];
+  }
+
   @override
   Widget build(BuildContext context) {
+    final currentAffirmation = _randomAffirmation;
+
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Mental Well-being'),
+        title: const Text('Serenity'),
         actions: [
           IconButton(
             icon: const Icon(Icons.settings),
@@ -30,90 +41,66 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ],
       ),
-      body: CustomScrollView(
-        slivers: [
-          SliverPadding(
+      body: Center(
+        child: SingleChildScrollView(
+          child: Padding(
             padding: const EdgeInsets.all(16.0),
-            sliver: SliverList(
-              delegate: SliverChildListDelegate([
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
                 const Text(
-                  'Welcome Back!',
+                  'Welcome to Serenity',
                   style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                  textAlign: TextAlign.center,
                 ),
-                const SizedBox(height: 16),
-                _buildDailyAffirmation(),
                 const SizedBox(height: 24),
-                _buildQuickAccessGrid(),
-                const SizedBox(height: 24),
-                const Text(
-                  'Recent Activities',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                ),
-                const SizedBox(height: 8),
-              ]),
+                _buildDailyAffirmation(currentAffirmation),
+                const SizedBox(height: 32),
+                _buildQuickAccessGrid(context),
+              ],
             ),
           ),
-          SliverPadding(
-            padding: const EdgeInsets.all(16.0),
-            sliver: SliverList(
-              delegate: SliverChildBuilderDelegate(
-                (context, index) {
-                  if (index < 3) {
-                    return ListTile(
-                      title: Text('Activity ${index + 1}'),
-                      subtitle: Text('Description of activity ${index + 1}'),
-                      leading: const Icon(Icons.check_circle),
-                    );
-                  } else if (index == 3) {
-                    return TextButton(
-                      onPressed: () {
-                        // TODO: Implement view all activities
-                      },
-                      child: const Text('View All Activities'),
-                    );
-                  }
-                  return null;
-                },
-                childCount: 4, // 3 activities + 1 "View All" button
-              ),
-            ),
-          ),
-        ],
+        ),
       ),
     );
   }
 
-  Widget _buildDailyAffirmation() {
+  Widget _buildDailyAffirmation(String affirmation) {
     return Container(
+      width: double.infinity,
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: Colors.blue.shade100,
         borderRadius: BorderRadius.circular(8),
       ),
-      child: const Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Text(
+          const Text(
             'Daily Affirmation',
             style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            textAlign: TextAlign.center,
           ),
-          SizedBox(height: 8),
+          const SizedBox(height: 8),
           Text(
-            'I am capable of handling any challenges that come my way.',
-            style: TextStyle(fontSize: 16),
+            affirmation,
+            style: const TextStyle(fontSize: 16),
+            textAlign: TextAlign.center,
           ),
         ],
       ),
     );
   }
 
-  Widget _buildQuickAccessGrid() {
+  Widget _buildQuickAccessGrid(BuildContext context) {
     return LayoutBuilder(builder: (context, constraints) {
       return GridView.builder(
-        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 2,
-          childAspectRatio:
-              (constraints.maxWidth / 2) / ((constraints.maxWidth / 2) * 0.6),
+          childAspectRatio: 1.2,
+          crossAxisSpacing: 16,
+          mainAxisSpacing: 16,
         ),
         itemCount: 4,
         shrinkWrap: true,
@@ -126,24 +113,28 @@ class _HomeScreenState extends State<HomeScreen> {
                 'Mindfulness',
                 Icons.spa,
                 const MindfulnessExercisesScreen(),
+                context,
               );
             case 1:
               return _buildQuickAccessButton(
                 'Stress Reduction',
                 Icons.favorite,
                 const StressReductionTechniquesScreen(),
+                context,
               );
             case 2:
               return _buildQuickAccessButton(
                 'Daily Affirmations',
                 Icons.format_quote,
                 const DailyAffirmationsScreen(),
+                context,
               );
             case 3:
               return _buildQuickAccessButton(
                 'Mood Tracking',
                 Icons.track_changes,
                 const MoodTrackingScreen(),
+                context,
               );
             default:
               return Container();
@@ -157,6 +148,7 @@ class _HomeScreenState extends State<HomeScreen> {
     String label,
     IconData icon,
     Widget destination,
+    BuildContext context,
   ) {
     return InkWell(
       onTap: () {
@@ -168,6 +160,7 @@ class _HomeScreenState extends State<HomeScreen> {
       child: Container(
         decoration: BoxDecoration(
           border: Border.all(color: Colors.grey[300]!),
+          borderRadius: BorderRadius.circular(8),
         ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,

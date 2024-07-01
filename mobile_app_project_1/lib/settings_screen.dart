@@ -9,9 +9,6 @@ class SettingsScreen extends StatefulWidget {
 }
 
 class _SettingsScreenState extends State<SettingsScreen> {
-  bool _notifications = true;
-  String _reminderFrequency = 'Daily';
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -48,37 +45,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
           color: Theme.of(context).primaryColor,
         ),
       ),
-    );
-  }
-
-  void _showReminderFrequencyDialog() {
-    showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: const Text('Reminder Frequency'),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              'Daily',
-              'Weekly',
-              'Monthly',
-            ].map((frequency) {
-              return RadioListTile<String>(
-                title: Text(frequency),
-                value: frequency,
-                groupValue: _reminderFrequency,
-                onChanged: (value) {
-                  setState(() {
-                    _reminderFrequency = value!;
-                  });
-                  Navigator.pop(context);
-                },
-              );
-            }).toList(),
-          ),
-        );
-      },
     );
   }
 

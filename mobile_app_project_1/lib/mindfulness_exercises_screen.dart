@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class MindfulnessExercisesScreen extends StatefulWidget {
-  const MindfulnessExercisesScreen({Key? key}) : super(key: key);
+  const MindfulnessExercisesScreen({super.key});
 
   @override
   _MindfulnessExercisesScreenState createState() =>
@@ -15,7 +15,6 @@ class _MindfulnessExercisesScreenState
       title: 'Deep Breathing',
       description: 'Focus on your breath for 5 minutes.',
       duration: 5,
-      category: 'Breathing',
       steps: [
         'Find a comfortable seated position',
         'Close your eyes and take a deep breath in through your nose',
@@ -23,13 +22,12 @@ class _MindfulnessExercisesScreenState
         'Repeat for 5 minutes',
       ],
       imageUrl:
-          'https://images.unsplash.com/photo-1591343395902-1adcb454c4e2?q=80&w=3087&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+          'https://images.unsplash.com/photo-1655970580622-4a547789c850?q=80&w=2974&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
     ),
     MindfulnessExercise(
       title: 'Body Scan',
       description: 'Gradually focus on each part of your body.',
       duration: 10,
-      category: 'Relaxation',
       steps: [
         'Lie down on your back',
         'Close your eyes and take a few deep breaths',
@@ -40,11 +38,51 @@ class _MindfulnessExercisesScreenState
       imageUrl:
           'https://images.pexels.com/photos/3760526/pexels-photo-3760526.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2',
     ),
+    MindfulnessExercise(
+      title: 'Mindful Walking',
+      description: 'Practice mindfulness while walking.',
+      duration: 15,
+      steps: [
+        'Find a quiet place to walk',
+        'Start walking at a slow, comfortable pace',
+        'Focus on the sensation of your feet touching the ground',
+        'Notice the movement of your legs and body',
+        'If your mind wanders, gently bring it back to the walking',
+      ],
+      imageUrl:
+          'https://images.unsplash.com/photo-1639391302869-9e3b130487cd?q=80&w=3008&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+    ),
+    MindfulnessExercise(
+      title: 'Loving-Kindness Meditation',
+      description: 'Cultivate feelings of love and compassion.',
+      duration: 10,
+      steps: [
+        'Sit comfortably and close your eyes',
+        'Think of someone you care about',
+        'Silently repeat: "May you be happy, may you be healthy, may you be safe"',
+        'Extend these wishes to yourself',
+        'Gradually extend to others, including strangers and all beings',
+      ],
+      imageUrl:
+          'https://images.unsplash.com/photo-1602192509154-0b900ee1f851?q=80&w=2970&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+    ),
+    MindfulnessExercise(
+      title: '5-4-3-2-1 Grounding Technique',
+      description: 'Use your senses to ground yourself in the present moment.',
+      duration: 5,
+      steps: [
+        'Look around and name 5 things you can see',
+        'Name 4 things you can touch',
+        'Name 3 things you can hear',
+        'Name 2 things you can smell',
+        'Name 1 thing you can taste',
+      ],
+      imageUrl: 'https://i.ytimg.com/vi/30VMIEmA114/maxresdefault.jpg',
+    ),
   ];
 
   List<MindfulnessExercise> filteredExercises = [];
   String searchQuery = '';
-  String selectedCategory = 'All';
 
   @override
   void initState() {
@@ -61,7 +99,6 @@ class _MindfulnessExercisesScreenState
       body: Column(
         children: [
           _buildSearchBar(),
-          _buildCategoryFilter(),
           Expanded(
             child: ListView.builder(
               itemCount: filteredExercises.length,
@@ -97,40 +134,12 @@ class _MindfulnessExercisesScreenState
     );
   }
 
-  Widget _buildCategoryFilter() {
-    Set<String> categories = {'All', ...exercises.map((e) => e.category)};
-    return SingleChildScrollView(
-      scrollDirection: Axis.horizontal,
-      child: Row(
-        children: categories.map((category) {
-          return Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 4.0),
-            child: ChoiceChip(
-              label: Text(category),
-              selected: selectedCategory == category,
-              onSelected: (selected) {
-                setState(() {
-                  selectedCategory = category;
-                  _filterExercises();
-                });
-              },
-            ),
-          );
-        }).toList(),
-      ),
-    );
-  }
-
   void _filterExercises() {
     filteredExercises = exercises.where((exercise) {
-      bool matchesSearch =
-          exercise.title.toLowerCase().contains(searchQuery.toLowerCase()) ||
-              exercise.description
-                  .toLowerCase()
-                  .contains(searchQuery.toLowerCase());
-      bool matchesCategory =
-          selectedCategory == 'All' || exercise.category == selectedCategory;
-      return matchesSearch && matchesCategory;
+      return exercise.title.toLowerCase().contains(searchQuery.toLowerCase()) ||
+          exercise.description
+              .toLowerCase()
+              .contains(searchQuery.toLowerCase());
     }).toList();
   }
 
@@ -139,7 +148,7 @@ class _MindfulnessExercisesScreenState
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: ExpansionTile(
         title: Text(exercise.title),
-        subtitle: Text('${exercise.duration} min | ${exercise.category}'),
+        subtitle: Text('${exercise.duration} min'),
         children: [
           Padding(
             padding: const EdgeInsets.all(16.0),
@@ -151,7 +160,7 @@ class _MindfulnessExercisesScreenState
                 if (exercise.imageUrl.isNotEmpty)
                   Image.network(
                     exercise.imageUrl,
-                    height: 150,
+                    height: 180,
                     width: double.infinity,
                     fit: BoxFit.cover,
                   ),
@@ -211,8 +220,7 @@ class _MindfulnessExercisesScreenState
         TextEditingController(text: exercise?.description ?? '');
     final durationController =
         TextEditingController(text: exercise?.duration.toString() ?? '');
-    final categoryController =
-        TextEditingController(text: exercise?.category ?? '');
+
     final stepsController =
         TextEditingController(text: exercise?.steps.join('\n') ?? '');
     final imageUrlController =
@@ -242,10 +250,6 @@ class _MindfulnessExercisesScreenState
                   keyboardType: TextInputType.number,
                 ),
                 TextField(
-                  controller: categoryController,
-                  decoration: const InputDecoration(labelText: 'Category'),
-                ),
-                TextField(
                   controller: stepsController,
                   decoration:
                       const InputDecoration(labelText: 'Steps (one per line)'),
@@ -269,7 +273,6 @@ class _MindfulnessExercisesScreenState
                   title: titleController.text,
                   description: descriptionController.text,
                   duration: int.tryParse(durationController.text) ?? 0,
-                  category: categoryController.text,
                   steps: stepsController.text.split('\n'),
                   imageUrl: imageUrlController.text,
                 );
@@ -308,7 +311,6 @@ class MindfulnessExercise {
   final String title;
   final String description;
   final int duration;
-  final String category;
   final List<String> steps;
   final String imageUrl;
 
@@ -316,7 +318,6 @@ class MindfulnessExercise {
     required this.title,
     required this.description,
     required this.duration,
-    required this.category,
     required this.steps,
     required this.imageUrl,
   });
@@ -325,8 +326,7 @@ class MindfulnessExercise {
 class ExerciseProgressScreen extends StatefulWidget {
   final MindfulnessExercise exercise;
 
-  const ExerciseProgressScreen({Key? key, required this.exercise})
-      : super(key: key);
+  const ExerciseProgressScreen({super.key, required this.exercise});
 
   @override
   _ExerciseProgressScreenState createState() => _ExerciseProgressScreenState();

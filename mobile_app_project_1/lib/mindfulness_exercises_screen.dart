@@ -21,8 +21,7 @@ class _MindfulnessExercisesScreenState
         'Exhale slowly through your mouth',
         'Repeat for 5 minutes',
       ],
-      imageUrl:
-          'https://images.unsplash.com/photo-1655970580622-4a547789c850?q=80&w=2974&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+      imageUrl: 'lib/images/image1.jpeg',
     ),
     MindfulnessExercise(
       title: 'Body Scan',
@@ -35,8 +34,7 @@ class _MindfulnessExercisesScreenState
         'Continue moving up through your body, focusing on each part',
         'End with focusing on your head and face',
       ],
-      imageUrl:
-          'https://images.pexels.com/photos/3760526/pexels-photo-3760526.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2',
+      imageUrl: 'lib/images/image2.jpeg',
     ),
     MindfulnessExercise(
       title: 'Mindful Walking',
@@ -49,8 +47,7 @@ class _MindfulnessExercisesScreenState
         'Notice the movement of your legs and body',
         'If your mind wanders, gently bring it back to the walking',
       ],
-      imageUrl:
-          'https://images.unsplash.com/photo-1639391302869-9e3b130487cd?q=80&w=3008&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+      imageUrl: 'lib/images/image3.jpeg',
     ),
     MindfulnessExercise(
       title: 'Loving-Kindness Meditation',
@@ -63,8 +60,7 @@ class _MindfulnessExercisesScreenState
         'Extend these wishes to yourself',
         'Gradually extend to others, including strangers and all beings',
       ],
-      imageUrl:
-          'https://images.unsplash.com/photo-1602192509154-0b900ee1f851?q=80&w=2970&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+      imageUrl: 'lib/images/image4.jpeg',
     ),
     MindfulnessExercise(
       title: '5-4-3-2-1 Grounding Technique',
@@ -77,7 +73,7 @@ class _MindfulnessExercisesScreenState
         'Name 2 things you can smell',
         'Name 1 thing you can taste',
       ],
-      imageUrl: 'https://i.ytimg.com/vi/30VMIEmA114/maxresdefault.jpg',
+      imageUrl: 'lib/images/image5.jpeg',
     ),
   ];
 
@@ -158,7 +154,7 @@ class _MindfulnessExercisesScreenState
                 Text(exercise.description),
                 const SizedBox(height: 8),
                 if (exercise.imageUrl.isNotEmpty)
-                  Image.network(
+                  Image.asset(
                     exercise.imageUrl,
                     height: 180,
                     width: double.infinity,

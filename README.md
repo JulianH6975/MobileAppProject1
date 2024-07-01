@@ -1,5 +1,6 @@
 # MobileAppProject1
-Mobile App. Group Project 1
+App Name: Serenity 
+Group Name: Serene
 ## Running the App
 
 To run this Flutter app in VS Code:

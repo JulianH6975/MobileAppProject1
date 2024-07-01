@@ -20,25 +20,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
       ),
       body: ListView(
         children: [
-          _buildSectionHeader('Notifications'),
-          SwitchListTile(
-            title: const Text('Enable Notifications'),
-            subtitle: const Text('Receive reminders and updates'),
-            value: _notifications,
-            onChanged: (value) {
-              setState(() {
-                _notifications = value;
-              });
-              // TODO: Implement notification handling
-            },
-          ),
-          ListTile(
-            title: const Text('Reminder Frequency'),
-            subtitle: Text(_reminderFrequency),
-            trailing: const Icon(Icons.arrow_forward_ios),
-            onTap: _showReminderFrequencyDialog,
-          ),
-          const Divider(),
           _buildSectionHeader('Data Management'),
           ListTile(
             title: const Text('Reset App Data'),

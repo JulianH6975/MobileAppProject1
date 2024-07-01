@@ -184,4 +184,3 @@ class MoodEntry {
 
   MoodEntry({required this.mood, required this.timestamp});
 }
-

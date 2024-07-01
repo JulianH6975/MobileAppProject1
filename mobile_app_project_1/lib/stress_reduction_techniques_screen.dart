@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'activity_storage.dart';
+import 'technique_instructions_screen.dart';
 
 class StressReductionTechniquesScreen extends StatefulWidget {
   const StressReductionTechniquesScreen({super.key});
@@ -23,20 +23,63 @@ class _StressReductionTechniquesScreenState
         'Start with your toes, tense them for 5 seconds, then relax.',
         'Move up to your calves, tense for 5 seconds, then relax.',
         'Continue this process moving up through your body.',
+        'Repeat this process until you are satisfied',
         'End with tensing and relaxing your facial muscles.',
       ],
     ),
     StressReductionTechnique(
-      title: 'Guided Imagery',
-      description: 'Visualize a peaceful, calming scene or experience.',
-      duration: 10,
+      title: 'Aromatherapy',
+      description:
+          'Use essential oils to promote relaxation and reduce stress.',
+      duration: 15,
+      category: 'Sensory',
+      detailedInstructions: [
+        'Choose a calming essential oil like lavender, chamomile, or ylang-ylang.',
+        'Add a few drops to a diffuser or mix with a carrier oil.',
+        'Find a comfortable spot to sit or lie down.',
+        'Breathe in the aroma deeply for 15 minutes.',
+        'Focus on the scent and how it makes you feel.',
+      ],
+    ),
+    StressReductionTechnique(
+      title: 'Art Therapy',
+      description:
+          'Express your feelings through creative activities to reduce stress.',
+      duration: 30,
+      category: 'Creative',
+      detailedInstructions: [
+        'Gather art supplies (paper, colors, brushes, etc.).',
+        'Set aside 30 minutes of uninterrupted time.',
+        'Start creating without judgment - draw, paint, or sculpt.',
+        'Focus on expressing your emotions through your art.',
+        'Reflect on your creation and how the process made you feel.',
+      ],
+    ),
+    StressReductionTechnique(
+      title: 'Yoga',
+      description:
+          'Combine physical postures, breathing techniques, and meditation.',
+      duration: 20,
+      category: 'Physical',
+      detailedInstructions: [
+        'Start with a few minutes of deep breathing.',
+        'Practice basic yoga poses like mountain pose, child pose, and downward dog.',
+        'Hold each pose for 30 seconds to 1 minute.',
+        'Focus on your breath and body sensations throughout the practice.',
+        'End with a few minutes of relaxation in corpse pose.',
+      ],
+    ),
+    StressReductionTechnique(
+      title: 'Journaling',
+      description: 'Write down your thoughts and feelings to process emotions.',
+      duration: 15,
       category: 'Mental',
       detailedInstructions: [
-        'Find a quiet, comfortable place to sit or lie down.',
-        'Close your eyes and take a few deep breaths.',
-        'Imagine a peaceful scene, like a beach or forest.',
-        'Engage all your senses in the visualization.',
-        'Spend 5-10 minutes immersed in this peaceful imagery.',
+        'Find a quiet place and grab a pen and paper or a digital device.',
+        'Set a timer for 15 minutes.',
+        'Write continuously about your thoughts, feelings, and experiences.',
+        'Don not worry about grammar or structure; just let your thoughts flow.',
+        'After 15 minutes, review what you have written if you would like.',
       ],
     ),
   ];
@@ -169,32 +212,13 @@ class _StressReductionTechniquesScreenState
   Widget _buildTechniqueItem(StressReductionTechnique technique) {
     return Card(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      child: ExpansionTile(
+      child: ListTile(
         title: Text(technique.title),
         subtitle: Text('${technique.duration} min | ${technique.category}'),
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(technique.description),
-                const SizedBox(height: 8),
-                const Text('Instructions:',
-                    style: TextStyle(fontWeight: FontWeight.bold)),
-                ...technique.detailedInstructions.map((step) => Padding(
-                      padding: const EdgeInsets.only(left: 16.0, top: 4.0),
-                      child: Text('• $step'),
-                    )),
-                const SizedBox(height: 16),
-                ElevatedButton(
-                  onPressed: () => _startTechnique(technique),
-                  child: const Text('Start Technique'),
-                ),
-              ],
-            ),
-          ),
-        ],
+        trailing: ElevatedButton(
+          onPressed: () => _startTechnique(technique),
+          child: const Text('Start'),
+        ),
       ),
     );
   }
@@ -287,12 +311,9 @@ class _StressReductionTechniquesScreenState
   }
 
   void _startTechnique(StressReductionTechnique technique) {
-    ActivityStorage.addActivityFromScreen(
-        'Stress Reduction', 'Started ${technique.title}');
-    // TODO: Implement starting the technique (e.g., navigate to a new screen or show a timer)
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Started ${technique.title}')),
-    );
+    Navigator.of(context).push(MaterialPageRoute(
+      builder: (context) => TechniqueInstructionsScreen(technique: technique),
+    ));
   }
 }
 
